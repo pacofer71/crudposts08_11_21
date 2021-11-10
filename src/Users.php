@@ -33,7 +33,17 @@ class Users extends Conexion{
 
     }
     public function read(){
-        
+        $q="select * from users where username=:u";
+        $stmt=parent::$conexion->prepare($q);
+        try{
+            $stmt->execute([
+                ':u'=>$this->username
+            ]);
+        }catch(PDOException $ex){
+            die("Error al devolver usuario:".$ex->getMessage());
+        }
+        parent::$conexion=null;
+        return $stmt->fetch(PDO::FETCH_OBJ);
     }
     public function update(){
 
@@ -67,6 +77,22 @@ class Users extends Conexion{
         }
         parent::$conexion=null;
         return $stmt->fetch(PDO::FETCH_OBJ)->img;
+    }
+    public function comprobarUsuario($u, $p){
+        $q="select * from users where username=:u AND password=:p";
+        $stmt=parent::$conexion->prepare($q);
+        try{
+            $stmt->execute([
+                ':u'=>$u,
+                ':p'=>$p
+            ]);
+        }catch(PDOException $ex){
+            die("Error al comprobar campo:".$ex->getMessage());
+        }
+        parent::$conexion=null;
+        return ($stmt->rowCount()!=0);
+
+
     }
 
     //-------------------------------------------------------------

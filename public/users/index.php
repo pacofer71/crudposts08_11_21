@@ -34,7 +34,7 @@ $imagen=(new Users)->recuperarImagen($username);
     <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false"><?php echo $username; ?></a>
     <ul class="dropdown-menu">
-      <li><a class="dropdown-item" href="#"><i class="fas fa-edit"></i> Editar Usuario</a></li>
+      <li><a class="dropdown-item" href="eusuario.php"><i class="fas fa-edit"></i> Editar Usuario</a></li>
       
       <li><hr class="dropdown-divider"></li>
       <li><a class="dropdown-item" href="cerrar.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesion</a></li>
