@@ -9,7 +9,7 @@ require dirname(__DIR__, 2) . "/vendor/autoload.php";
 use Posts\{Users, Posts};
 
 $imagen = (new Users)->recuperarImagen($username);
-$postsUsuario = (new Posts)->read($username);
+
 
 ?>
 <!DOCTYPE html>
@@ -49,37 +49,7 @@ $postsUsuario = (new Posts)->read($username);
   </ul>
   <h5 class="text-center mt-2">Posts: <b><?php echo $username ?></b></h5>
   <div class="container mt-2">
-    <a href="../posts/cpost.php" class="btn btn-info my-2"><i class="fas fa-plus"></i> Nuevo Post</a>
-    <table class="table table-striped table-info">
-      <thead>
-        <tr>
-          <th scope="col">Detalle</th>
-          <th scope="col">Titulo</th>
-          <th scope="col">Fecha</th>
-          <th scope="col">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php
-          while($fila=$postsUsuario->fetch(PDO::FETCH_OBJ)){
-            $date=new DateTime($fila->updated_at);
-
-          echo <<<TXT
-            <tr>
-              <th scope="row">
-              <a href="../posts/dpost.php?id={$fila->id}" class="btn btn-success"><i class="fas fa-info"></i></a>
-              </th>
-              <td>{$fila->titulo}</td>
-              <td>{$date->format('d-M-Y')}</td>
-              <td>@mdo</td>
-            </tr>
-          TXT;
-          }
-       ?>
-      </tbody>
-    </table>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 </body>
-
 </html>
