@@ -2,6 +2,7 @@
 namespace Posts;
 use Faker;
 use PDOException;
+use PDO;
 use Posts\Users;
 
 class Posts extends Conexion{
@@ -51,9 +52,31 @@ class Posts extends Conexion{
 
     }
     public function update(){
+        $q="update posts set titulo=:t, body=:b where id=:i";
+        $stmt=parent::$conexion->prepare($q);
+        try{
+            $stmt->execute([
+                ':t'=>$this->titulo,
+                ':b'=>$this->body,
+                ':i'=>$this->id
+            ]);
+        } catch(PDOException $ex){
+            die("error al actualizar: ".$ex->getMessage());
+        }
+        parent::$conexion=null;
 
     }
-    public function delete(){
+    public function delete($id){
+        $q="delete from posts where id=:i";
+        $stmt=parent::$conexion->prepare($q);
+        try{
+            $stmt->execute([
+                ':i'=>$id
+            ]);
+        } catch(PDOException $ex){
+            die("error al borrar: ".$ex->getMessage());
+        }
+        parent::$conexion=null;
 
     }
     //-----------OTROS METODOS----------------------------------
@@ -80,6 +103,22 @@ class Posts extends Conexion{
         }
         parent::$conexion=null;
         return ($stmt->rowCount()!=0);
+    }
+    
+    public function devolverPost($id){
+        $q="select * from posts where id=:i";
+        $stmt=parent::$conexion->prepare($q);
+        try{
+            $stmt->execute([
+                ':i'=>$id
+            ]);
+
+        }catch(PDOException $ex){
+            die("Error al devolver post: ".$ex->getMessage());
+        }
+        parent::$conexion=null;
+        return $stmt->fetch(PDO::FETCH_OBJ);
+
     }
 
 

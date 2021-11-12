@@ -49,6 +49,16 @@ $postsUsuario = (new Posts)->read($username);
   </ul>
   <h5 class="text-center mt-2">Posts: <b><?php echo $username ?></b></h5>
   <div class="container mt-2">
+    <?php
+      if(isset($_SESSION['mensaje'])){
+        echo <<<TXT
+        <div class="alert alert-primary" role="alert">
+        {$_SESSION['mensaje']}
+        </div>
+        TXT;
+        unset($_SESSION['mensaje']);
+      }
+    ?>
     <a href="../posts/cpost.php" class="btn btn-info my-2"><i class="fas fa-plus"></i> Nuevo Post</a>
     <table class="table table-striped table-info">
       <thead>
@@ -71,7 +81,13 @@ $postsUsuario = (new Posts)->read($username);
               </th>
               <td>{$fila->titulo}</td>
               <td>{$date->format('d-M-Y')}</td>
-              <td>@mdo</td>
+              <td>
+              <form name='s' action='../posts/bpost.php' method='POST'>
+              <input type='hidden' name='id' value='{$fila->id}'>
+              <a href="../posts/upost.php?id={$fila->id}" class="btn btn-warning"><i class="fas fa-edit"></i></a>
+              <button type="submit" class="btn btn-danger" onclick="return confirm('¿Desea Borrar el Post?')"><i class="fas fa-trash-alt"></i></button>
+              </form>
+              </td>
             </tr>
           TXT;
           }

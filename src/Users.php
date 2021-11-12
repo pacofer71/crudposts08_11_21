@@ -111,6 +111,20 @@ class Users extends Conexion{
         return $ids;
         
     }
+    public function devolverId($username){
+        $q="select id from users where username=:un";
+        $stmt=parent::$conexion->prepare($q);
+        try{
+            $stmt->execute([
+                ':un'=>$username
+            ]);
+        }catch(PDOException $ex){
+            die("Error al devolver ids: ".$ex->getMessage());
+        }
+        parent::$conexion=null;
+        return $stmt->fetch(PDO::FETCH_OBJ)->id;
+
+    }
 
     //-------------------------------------------------------------
     
