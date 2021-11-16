@@ -5,6 +5,10 @@ require dirname(__DIR__, 2) . "/vendor/autoload.php";
 use Posts\Users;
 
 $error = false;
+
+$INTENTOS=5; // intentos de login
+$TIEMPO=60; //Tiempo que tendremos desactivado el boton login 
+
 function estaVacio($c, $v)
 {
     if (strlen($v) < 5) {
@@ -25,10 +29,24 @@ if (isset($_POST['btnLogin'])) {
         //creamos el regsitro
         $pass=hash('sha256', $p);
         if((new Users)->comprobarUsuario($un, $pass)){
+            setcookie('errorV', 1, time()-100); //limpio contador de errores si acierto
             $_SESSION['username']=$un;
             header("Location:index.php");
         }else{
-            $_SESSION['error_validacion']="Usuario o password incorrectos !!!";
+            if(isset($_COOKIE['errorV'])){
+                $cont=++$_COOKIE['errorV'];
+                if($cont==$INTENTOS){
+                    setcookie('errorV', $cont, time()+$TIEMPO); //SOLO DURA EL TIEMPO DE BLOQUEO
+                }else{
+                    setcookie('errorV', $cont, time()+3600);
+                }
+
+            }else{
+                setcookie('errorV', 1, time()+3600);
+            }
+            $total=(isset($_COOKIE['errorV'])) ? ($INTENTOS-$_COOKIE['errorV']) : ($INTENTOS-1);
+            $_SESSION['error_validacion']="Usuario o password incorrectos, te quedan: $total intentos";
+            //$_SESSION['error_validacion']="Usuario o password incorrectos, te quedan:". ($INTENTOS-$_COOKIE['errorV'])." intentos";
             header("Location:{$_SERVER['PHP_SELF']}");
         }
 
@@ -92,7 +110,14 @@ if (isset($_POST['btnLogin'])) {
                     </div>
 
                     <div>
-                        <button type='submit' name="btnLogin" class="btn btn-info"><i class="fas fa-sign-in-alt"></i> Login</button>
+                        <?php
+                            if(isset($_COOKIE['errorV']) && $_COOKIE['errorV']==$INTENTOS){
+                            echo "<button type='submit' name='btnLogin' class='btn btn-info' disabled><i class='fas fa-sign-in-alt'></i> Login (espere $TIEMPO s.)</button>";
+                            }else{
+                            echo "<button type='submit' name='btnLogin' class='btn btn-info'><i class='fas fa-sign-in-alt'></i> Login</button>";
+                            }
+                        ?>
+                        
                         <button type="reset" class="btn btn-warning"><i class="fas fa-broom"></i> Limpiar</button>
                         <a href="cuser.php" class="btn btn-danger"><i class="fas fa-sign-in-alt"></i> Registarse</a>
                     </div>
