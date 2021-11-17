@@ -45,15 +45,34 @@ class Users extends Conexion{
         parent::$conexion=null;
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
-    public function update(){
-
+    public function update($id){
+        $q="update users set username=:un, email=:em, password=:pa, img=:im where id=:i";
+        $stmt=parent::$conexion->prepare($q);
+        try{
+            $stmt->execute([
+                ':un'=>$this->username,
+                ':em'=>$this->email,
+                ':pa'=>$this->password,
+                ':im'=>$this->img,
+                ':i'=>$id
+            ]);
+        }catch(PDOException $ex){
+            die("Error al actualizar usuario: ".$ex->getMessage());
+        }
+        parent::$conexion=null;
     }
     public function delete(){
+
 
     }
     //----------------------OTROS METODOS--------------------------
     public function existeCampo($c, $v){
+        if(!isset($this->id)){
         $q="select * from users where $c=:v";
+        }else{
+        $q="select * from users where $c=:v AND id<>{$this->id}";
+        }
+
         $stmt=parent::$conexion->prepare($q);
         try{
             $stmt->execute([
